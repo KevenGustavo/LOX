@@ -2,8 +2,8 @@
 
 
 ## Integrantes
-- Arthur Sampaio Pereira
-- Keven Gustavo Dos Santos Gomes
+- Arthur Sampaio Pereira - arthurswntg2000
+- Keven Gustavo Dos Santos Gomes - Keven.Gustavo.DSG
 
 
 ## O que está neste repositório
