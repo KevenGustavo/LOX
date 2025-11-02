@@ -19,7 +19,7 @@ class Scanner {
 
   List<Token> scanTokens() {
     while (!isAtEnd()) {
-      // Início do próximo lexema
+    
       start = current;
       scanToken();
     }
@@ -42,18 +42,36 @@ class Scanner {
       case ';': addToken(SEMICOLON); break;
       case '*': addToken(STAR); break;
 
-      // Operadores compostos
-      case '!':
-        addToken(match('=') ? BANG_EQUAL : BANG);
+    
+      case '!': addToken(match('=') ? BANG_EQUAL : BANG); break;
+      case '=': addToken(match('=') ? EQUAL_EQUAL : EQUAL); break;
+      case '<': addToken(match('=') ? LESS_EQUAL : LESS); break;
+      case '>': addToken(match('=') ? GREATER_EQUAL : GREATER); break;
+
+      
+      case '/':
+        if (match('/')) {
+          
+          while (peek() != '\n' && !isAtEnd()) advance();
+        } else {
+          addToken(SLASH);
+        }
         break;
-      case '=':
-        addToken(match('=') ? EQUAL_EQUAL : EQUAL);
+
+     
+      case ' ':
+      case '\r':
+      case '\t':
+      
         break;
-      case '<':
-        addToken(match('=') ? LESS_EQUAL : LESS);
+
+      case '\n':
+        line++;
         break;
-      case '>':
-        addToken(match('=') ? GREATER_EQUAL : GREATER);
+
+    
+      case '"':
+        string();
         break;
 
       default:
@@ -70,20 +88,10 @@ class Scanner {
     return true;
   }
 
-  private boolean isAtEnd() {
-    return current >= source.length();
+
+  private char peek() {
+    if (isAtEnd()) return '\0';
+    return source.charAt(current);
   }
 
-  private char advance() {
-    return source.charAt(current++);
-  }
-
-  private void addToken(TokenType type) {
-    addToken(type, null);
-  }
-
-  private void addToken(TokenType type, Object literal) {
-    String text = source.substring(start, current);
-    tokens.add(new Token(type, text, literal, line));
-  }
-}
+  private boolean
