@@ -57,7 +57,6 @@ class Scanner {
           addToken(SLASH);
         }
         break;
-
      
       case ' ':
       case '\r':
@@ -75,9 +74,30 @@ class Scanner {
         break;
 
       default:
-        Lox.error(line, "Unexpected character.");
+        if (isDigit(c)) {
+          number();
+        } else {
+          Lox.error(line, "Unexpected character.");
+        }
         break;
     }
+  }
+
+  private char peekNext() {
+    if (current + 1 >= source.length()) return '\0';
+    return source.charAt(current + 1);
+  }
+
+  private void number() {
+    while (isDigit(peek())) advance();
+
+    if (peek() == '.' && isDigit(peekNext())) {
+      advance();
+      while (isDigit(peek())) advance();
+    }
+
+    addToken(NUMBER,
+        Double.parseDouble(source.substring(start, current)));
   }
 
   private boolean match(char expected) {
@@ -94,4 +114,24 @@ class Scanner {
     return source.charAt(current);
   }
 
-  private boolean
+  private boolean isDigit(char c) {
+    return c >= '0' && c <= '9';
+  }
+  
+  private void string() {
+    while (peek() != '"' && !isAtEnd()) {
+      if (peek() == '\n') line++;
+      advance();
+    }
+
+    if (isAtEnd()) {
+      Lox.error(line, "Unterminated string.");
+      return;
+    }
+
+    advance();
+
+    String value = source.substring(start + 1, current - 1);
+    addToken(STRING, value);
+  }
+}
