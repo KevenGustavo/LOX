@@ -1,0 +1,30 @@
+# Arquivos gerados pelo Maven
+/target/
+/pom.xml.tag
+/pom.xml.releaseBackup
+/pom.xml.versionsBackup
+/pom.xml.next
+/release.properties
+/dependency-reduced-pom.xml
+/buildNumber.properties
+
+# Arquivos compilados do Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Pastas de build antigas (mencionadas na issue)
+/bin/
+/out/
+
+# Arquivos de IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Arquivos de OS
+.DS_Store
+Thumbs.db
