@@ -3,7 +3,7 @@ Este repositório contém o código-fonte de um interpretador para a linguagem L
 
 O projeto foi reestruturado para seguir as boas práticas de projetos Java modernos, utilizando **Apache Maven** para gerenciamento de build e dependências.
 
-## Integrantes
+## 👥 Integrantes
 - Arthur Sampaio Pereira - arthurswntg2000
 - Keven Gustavo Dos Santos Gomes - Keven.Gustavo.DSG
 
@@ -14,33 +14,40 @@ Para compilar e executar este projeto, você precisará ter os seguintes softwar
 * **Java (JDK 17** ou superior)
 * **Apache Maven**
 
-## ⚙️ Como Compilar
+# ⚙️ Compilando e Empacotando (Build)
 
-Este projeto é gerenciado pelo Maven, portanto, não é necessário compilar arquivos manualmente ou depender de configurações de IDE.
+Este projeto é gerenciado pelo Maven, o que simplifica o processo de build.
 
-1.  Clone este repositório:
+1.  **Clone o repositório:**
     ```bash
-    git clone [URL-DO-SEU-REPOSITORIO]
-    cd [NOME-DO-SEU-REPOSITORIO]
+    git clone https://github.com/KevenGustavo/LOX.git
+    cd LOX
     ```
 
-2.  Execute o comando de build do Maven na raiz do projeto (onde o arquivo `pom.xml` está localizado):
+2.  **Execute o build do Maven:**
+    Na raiz do projeto (onde o arquivo `pom.xml` está localizado), execute:
     ```bash
     mvn clean install
     ```
-* `clean`: Remove builds anteriores (limpa a pasta `target/`).
-* `install`: Compila o código-fonte, executa testes (se houver) e empacota o projeto em um arquivo `.jar`.
+    * `clean`: Remove builds anteriores (limpa a pasta `target/`).
+    * `install`: Compila o código, executa testes e empacota o projeto em um arquivo `.jar` executável dentro da pasta `target/`.
 
-Se o build for bem-sucedido, você verá uma pasta `target/` criada na raiz do projeto.
+---
 
-## ▶️ Como Executar
+## ▶️ Executando o Interpretador
 
-Após a compilação bem-sucedida, você pode executar o interpretador de duas maneiras:
+Após o build bem-sucedido, você pode executar o interpretador de duas maneiras principais:
 
-### 1. Usando o Plugin do Maven (Recomendado)
+### 1. Modo Interativo (REPL)
 
-Este comando executa a classe principal (`interpretador.Lox`) definida no `pom.xml`:
+Inicia um console "Read-Eval-Print-Loop" para testar comandos Lox linha por linha.
 
+**Opção A: Usando o Plugin do Maven**
 ```bash
 mvn exec:java
+```
+
+**Opção B: Usando o .jar empacotado**
+```bash
+java -jar target/lox.jar
 ```
