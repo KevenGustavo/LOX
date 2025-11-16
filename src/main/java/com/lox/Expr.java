@@ -1,5 +1,4 @@
-package interpretador;
-package com.craftinginterpreters.lox;
+package com.lox;
 
 abstract class Expr {
   

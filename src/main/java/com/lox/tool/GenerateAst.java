@@ -1,5 +1,4 @@
-package interpretador;
-package com.craftinginterpreters.tool;
+package com.lox.tool;
 
 import java.io.IOException;
 import java.io.PrintWriter;
