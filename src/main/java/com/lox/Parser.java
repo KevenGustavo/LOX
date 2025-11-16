@@ -1,10 +1,10 @@
-package com.lox;
+package com.craftinginterpreters.lox;
 
 import java.util.List;
-import static com.lox.TokenType.*;
 
-public class Parser {
+import static com.craftinginterpreters.lox.TokenType.*;
 
+class Parser {
   private static class ParseError extends RuntimeException {}
 
   private final List<Token> tokens;
@@ -13,6 +13,24 @@ public class Parser {
   Parser(List<Token> tokens) {
     this.tokens = tokens;
   }
+
+  Expr parse() {
+    try {
+      return expression();
+    } catch (ParseError error) {
+      return null;
+    }
+  }
+
+  
+  // expression     → equality ;
+  // equality       → comparison ( ( "!=" | "==" ) comparison )* ; IGUALDADE
+  // comparison     → addition ( ( ">" | ">=" | "<" | "<=" ) addition )* - COMPARAÇÃO;
+  // addition       → multiplication ( ( "-" | "+" ) multiplication )* - ADIÇÃO;
+  // multiplication → unary ( ( "/" | "*" ) unary )* - MULTIPLICAÇÃO;
+  // unary          → ( "!" | "-" ) unary | primary - ;
+  // primary        → NUMBER | STRING | "true" | "false" | "nil" 
+  //                | "(" expression ")" ;
 
   private Expr expression() {
     return equality();
@@ -31,30 +49,30 @@ public class Parser {
   }
 
   private Expr comparison() {
-    Expr expr = term();
+    Expr expr = addition();
 
     while (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
       Token operator = previous();
-      Expr right = term();
+      Expr right = addition();
       expr = new Expr.Binary(expr, operator, right);
     }
 
     return expr;
   }
 
-  private Expr term() {
-    Expr expr = factor();
+  private Expr addition() {
+    Expr expr = multiplication();
 
     while (match(MINUS, PLUS)) {
       Token operator = previous();
-      Expr right = factor();
+      Expr right = multiplication();
       expr = new Expr.Binary(expr, operator, right);
     }
 
     return expr;
   }
 
-  private Expr factor() {
+  private Expr multiplication() {
     Expr expr = unary();
 
     while (match(SLASH, STAR)) {
@@ -72,7 +90,6 @@ public class Parser {
       Expr right = unary();
       return new Expr.Unary(operator, right);
     }
-
     return primary();
   }
 
@@ -94,9 +111,19 @@ public class Parser {
     throw error(peek(), "Expect expression.");
   }
 
-  // ----------------------------
-  // Métodos auxiliares
-  // ----------------------------
+
+
+  private Token consume(TokenType type, String message) {
+    if (check(type)) return advance();
+    throw error(peek(), message);
+  }
+
+  private ParseError error(Token token, String message) {
+    Lox.error(token, message);
+    return new ParseError();
+  }
+
+ 
 
   private boolean match(TokenType... types) {
     for (TokenType type : types) {
@@ -105,13 +132,7 @@ public class Parser {
         return true;
       }
     }
-
     return false;
-  }
-
-  private Token consume(TokenType type, String message) {
-    if (check(type)) return advance();
-    throw error(peek(), message);
   }
 
   private boolean check(TokenType type) {
@@ -134,10 +155,5 @@ public class Parser {
 
   private Token previous() {
     return tokens.get(current - 1);
-  }
-
-  private ParseError error(Token token, String message) {
-    Lox.error(token, message);
-    return new ParseError();
   }
 }
