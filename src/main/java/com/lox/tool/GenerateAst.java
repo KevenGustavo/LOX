@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 
-public class GenerateAst {
+public class GenerateAst{
   public static void main(String[] args) throws IOException {
     if (args.length != 1) {
       System.err.println("Usage: generate_ast <output directory>");
@@ -27,7 +27,7 @@ public class GenerateAst {
     String path = outputDir + "/" + baseName + ".java";
     PrintWriter writer = new PrintWriter(path, "UTF-8");
 
-    writer.println("package com.craftinginterpreters.lox;");
+    writer.println("package com.lox;");
     writer.println();
     writer.println("import java.util.List;");
     writer.println();
