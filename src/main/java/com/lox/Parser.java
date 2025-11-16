@@ -1,19 +1,19 @@
-package com.craftinginterpreters.lox;
+package com.lox;
 
 import java.util.List;
+import static com.lox.TokenType.*;
 
-import static com.craftinginterpreters.lox.TokenType.*;
-
-class Parser {
+public class Parser {
   private static class ParseError extends RuntimeException {}
 
   private final List<Token> tokens;
   private int current = 0;
 
-  Parser(List<Token> tokens) {
+  public Parser(List<Token> tokens) {
     this.tokens = tokens;
   }
 
+  // Entry point
   Expr parse() {
     try {
       return expression();
@@ -22,16 +22,16 @@ class Parser {
     }
   }
 
-  
-  // expression     → equality ;
-  // equality       → comparison ( ( "!=" | "==" ) comparison )* ; IGUALDADE
-  // comparison     → addition ( ( ">" | ">=" | "<" | "<=" ) addition )* - COMPARAÇÃO;
-  // addition       → multiplication ( ( "-" | "+" ) multiplication )* - ADIÇÃO;
-  // multiplication → unary ( ( "/" | "*" ) unary )* - MULTIPLICAÇÃO;
-  // unary          → ( "!" | "-" ) unary | primary - ;
+  // expression     → equality ; 
+  // equality       → comparison ( ( "!=" | "==" ) comparison )* ; IGUALDADE 
+  // comparison     → addition ( ( ">" | ">=" | "<" | "<=" ) addition )* - COMPARAÇÃO; 
+  // addition       → multiplication ( ( "-" | "+" ) multiplication )* - ADIÇÃO; 
+  // multiplication → unary ( ( "/" | "*" ) unary )* - MULTIPLICAÇÃO; 
+  // unary          → ( "!" | "-" ) unary | primary - ; 
   // primary        → NUMBER | STRING | "true" | "false" | "nil" 
   //                | "(" expression ")" ;
 
+  
   private Expr expression() {
     return equality();
   }
@@ -49,30 +49,30 @@ class Parser {
   }
 
   private Expr comparison() {
-    Expr expr = addition();
+    Expr expr = term();
 
     while (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
       Token operator = previous();
-      Expr right = addition();
+      Expr right = term();
       expr = new Expr.Binary(expr, operator, right);
     }
 
     return expr;
   }
 
-  private Expr addition() {
-    Expr expr = multiplication();
+  private Expr term() {
+    Expr expr = factor();
 
     while (match(MINUS, PLUS)) {
       Token operator = previous();
-      Expr right = multiplication();
+      Expr right = factor();
       expr = new Expr.Binary(expr, operator, right);
     }
 
     return expr;
   }
 
-  private Expr multiplication() {
+  private Expr factor() {
     Expr expr = unary();
 
     while (match(SLASH, STAR)) {
@@ -90,6 +90,7 @@ class Parser {
       Expr right = unary();
       return new Expr.Unary(operator, right);
     }
+
     return primary();
   }
 
@@ -108,23 +109,10 @@ class Parser {
       return new Expr.Grouping(expr);
     }
 
-    throw error(peek(), "Expect expression.");
+    throw error(peek(), "Expect expression."); // <-- 6.4 final change
   }
 
-
-
-  private Token consume(TokenType type, String message) {
-    if (check(type)) return advance();
-    throw error(peek(), message);
-  }
-
-  private ParseError error(Token token, String message) {
-    Lox.error(token, message);
-    return new ParseError();
-  }
-
- 
-
+  
   private boolean match(TokenType... types) {
     for (TokenType type : types) {
       if (check(type)) {
@@ -133,6 +121,11 @@ class Parser {
       }
     }
     return false;
+  }
+
+  private Token consume(TokenType type, String message) {
+    if (check(type)) return advance();
+    throw error(peek(), message);
   }
 
   private boolean check(TokenType type) {
@@ -155,5 +148,32 @@ class Parser {
 
   private Token previous() {
     return tokens.get(current - 1);
+  }
+
+  private ParseError error(Token token, String message) {
+    Lox.error(token, message);
+    return new ParseError();
+  }
+
+  private void synchronize() { // <-- 6.3.3
+    advance();
+
+    while (!isAtEnd()) {
+      if (previous().type == SEMICOLON) return;
+
+      switch (peek().type) {
+        case CLASS:
+        case FUN:
+        case VAR:
+        case FOR:
+        case IF:
+        case WHILE:
+        case PRINT:
+        case RETURN:
+          return;
+      }
+
+      advance();
+    }
   }
 }
