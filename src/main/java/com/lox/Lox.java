@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Lox {
-
   private static final Interpreter interpreter = new Interpreter();
   static boolean hadError = false;
   static boolean hadRuntimeError = false;
@@ -42,7 +41,7 @@ public class Lox {
       String line = reader.readLine();
       if (line == null) break;
       run(line);
-      hadError = false;
+      hadError = false; // Não interrompe REPL por erros
     }
   }
 
@@ -62,12 +61,6 @@ public class Lox {
     report(line, "", message);
   }
 
-  private static void report(int line, String where, String message) {
-    System.err.println(
-        "[line " + line + "] Error" + where + ": " + message);
-    hadError = true;
-  }
-
   static void error(Token token, String message) {
     if (token.type == TokenType.EOF) {
       report(token.line, " at end", message);
@@ -76,10 +69,15 @@ public class Lox {
     }
   }
 
-  // === Runtime Error Handling ===
+  private static void report(int line, String where, String message) {
+    System.err.println(
+      "[line " + line + "] Error" + where + ": " + message);
+    hadError = true;
+  }
+
   static void runtimeError(RuntimeError error) {
-    System.err.println(error.getMessage()
-        + "\n[line " + error.token.line + "]");
+    System.err.println(error.getMessage() +
+        "\n[line " + error.token.line + "]");
     hadRuntimeError = true;
   }
 }
